@@ -1,0 +1,472 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="PruebaCarvajalModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <EntityType Name="Configuracion">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Parametro" Type="varchar" MaxLength="600" />
+          <Property Name="Valor" Type="varchar(max)" />
+        </EntityType>
+        <EntityType Name="DetalleCompra">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdRecordEncabezado" Type="bigint" Nullable="false" />
+          <Property Name="IdProducto" Type="bigint" Nullable="false" />
+          <Property Name="Cantidad" Type="int" Nullable="false" />
+          <Property Name="PrecioCompraUnidad" Type="money" Nullable="false" />
+          <Property Name="Descuento" Type="money" />
+        </EntityType>
+        <EntityType Name="EncabezadoCompra">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Fecha" Type="datetime" />
+          <Property Name="IdUsuario" Type="bigint" Nullable="false" />
+          <Property Name="SubTotal" Type="money" />
+          <Property Name="Impuestos" Type="money" />
+          <Property Name="Total" Type="money" />
+        </EntityType>
+        <EntityType Name="Inventario">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="IdProducto" Type="bigint" Nullable="false" />
+          <Property Name="Descuento" Type="decimal" Precision="2" Scale="1" />
+          <Property Name="Estado" Type="int" Nullable="false" />
+          <Property Name="CantidadDisponible" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="LogEvents">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="Message" Type="nvarchar(max)" />
+          <Property Name="Level" Type="nvarchar(max)" />
+          <Property Name="TimeStamp" Type="datetime" />
+          <Property Name="Exception" Type="nvarchar(max)" />
+          <Property Name="Properties" Type="nvarchar(max)" />
+          <Property Name="Modulo" Type="nvarchar(max)" />
+          <Property Name="Metodo" Type="nvarchar(max)" />
+          <Property Name="Error" Type="nvarchar(max)" />
+        </EntityType>
+        <EntityType Name="Productos">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="CodProducto" Type="varchar(max)" Nullable="false" />
+          <Property Name="NombreProducto" Type="varchar(max)" Nullable="false" />
+          <Property Name="Descripcion" Type="varchar(max)" />
+          <Property Name="Precio" Type="money" Nullable="false" />
+          <Property Name="Imagen" Type="varchar(max)" />
+          <Property Name="Estado" Type="bit" />
+        </EntityType>
+        <EntityType Name="Usuarios">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="bigint" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="NumeroDocumento" Type="varchar" MaxLength="600" Nullable="false" />
+          <Property Name="NombreCompleto" Type="varchar" MaxLength="600" Nullable="false" />
+          <Property Name="NombreUsuario" Type="varchar" MaxLength="600" Nullable="false" />
+          <Property Name="CorreoElectronico" Type="varchar" MaxLength="600" Nullable="false" />
+          <Property Name="ClaveAccesoCifrada" Type="varchar(max)" />
+          <Property Name="FechaClave" Type="datetime" />
+          <Property Name="NDiasClave" Type="int" />
+          <Property Name="Salt" Type="varchar(max)" />
+          <Property Name="Estado" Type="int" Nullable="false" />
+          <Property Name="TipoUsuario" Type="bit" />
+        </EntityType>
+        <Association Name="FK_DetalleCompra_EncabezadoCompra">
+          <End Role="EncabezadoCompra" Type="Self.EncabezadoCompra" Multiplicity="1" />
+          <End Role="DetalleCompra" Type="Self.DetalleCompra" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EncabezadoCompra">
+              <PropertyRef Name="IdRecord" />
+            </Principal>
+            <Dependent Role="DetalleCompra">
+              <PropertyRef Name="IdRecordEncabezado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DetalleCompra_Productos">
+          <End Role="Productos" Type="Self.Productos" Multiplicity="1" />
+          <End Role="DetalleCompra" Type="Self.DetalleCompra" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Productos">
+              <PropertyRef Name="IdRecord" />
+            </Principal>
+            <Dependent Role="DetalleCompra">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EncabezadoCompra_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="EncabezadoCompra" Type="Self.EncabezadoCompra" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="IdRecord" />
+            </Principal>
+            <Dependent Role="EncabezadoCompra">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Inventario_Productos">
+          <End Role="Productos" Type="Self.Productos" Multiplicity="1" />
+          <End Role="Inventario" Type="Self.Inventario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Productos">
+              <PropertyRef Name="IdRecord" />
+            </Principal>
+            <Dependent Role="Inventario">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Function Name="spActualizarInventario" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="CantidadDisponible" Type="int" Mode="In" />
+          <Parameter Name="IdProducto" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="spActualizarProducto" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="IdRecordProducto" Type="bigint" Mode="In" />
+        </Function>
+        <Function Name="spReporteVentas" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo">
+          <Parameter Name="opcion" Type="varchar" Mode="In" />
+        </Function>
+        <EntityContainer Name="PruebaCarvajalModelStoreContainer">
+          <EntitySet Name="Configuracion" EntityType="Self.Configuracion" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="DetalleCompra" EntityType="Self.DetalleCompra" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="EncabezadoCompra" EntityType="Self.EncabezadoCompra" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Inventario" EntityType="Self.Inventario" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="LogEvents" EntityType="Self.LogEvents" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Productos" EntityType="Self.Productos" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Usuarios" EntityType="Self.Usuarios" Schema="dbo" store:Type="Tables" />
+          <AssociationSet Name="FK_DetalleCompra_EncabezadoCompra" Association="Self.FK_DetalleCompra_EncabezadoCompra">
+            <End Role="EncabezadoCompra" EntitySet="EncabezadoCompra" />
+            <End Role="DetalleCompra" EntitySet="DetalleCompra" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DetalleCompra_Productos" Association="Self.FK_DetalleCompra_Productos">
+            <End Role="Productos" EntitySet="Productos" />
+            <End Role="DetalleCompra" EntitySet="DetalleCompra" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EncabezadoCompra_Usuarios" Association="Self.FK_EncabezadoCompra_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="EncabezadoCompra" EntitySet="EncabezadoCompra" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Inventario_Productos" Association="Self.FK_Inventario_Productos">
+            <End Role="Productos" EntitySet="Productos" />
+            <End Role="Inventario" EntitySet="Inventario" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="PruebaCarvajalModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="Configuracion">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Parametro" Type="String" MaxLength="600" FixedLength="false" Unicode="false" />
+          <Property Name="Valor" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+        </EntityType>
+        <EntityType Name="DetalleCompra">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdRecordEncabezado" Type="Int64" Nullable="false" />
+          <Property Name="IdProducto" Type="Int64" Nullable="false" />
+          <Property Name="Cantidad" Type="Int32" Nullable="false" />
+          <Property Name="PrecioCompraUnidad" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Descuento" Type="Decimal" Precision="19" Scale="4" />
+          <NavigationProperty Name="EncabezadoCompra" Relationship="Self.FK_DetalleCompra_EncabezadoCompra" FromRole="DetalleCompra" ToRole="EncabezadoCompra" />
+          <NavigationProperty Name="Productos" Relationship="Self.FK_DetalleCompra_Productos" FromRole="DetalleCompra" ToRole="Productos" />
+        </EntityType>
+        <EntityType Name="EncabezadoCompra">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Fecha" Type="DateTime" Precision="3" />
+          <Property Name="IdUsuario" Type="Int64" Nullable="false" />
+          <Property Name="SubTotal" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Impuestos" Type="Decimal" Precision="19" Scale="4" />
+          <Property Name="Total" Type="Decimal" Precision="19" Scale="4" />
+          <NavigationProperty Name="DetalleCompra" Relationship="Self.FK_DetalleCompra_EncabezadoCompra" FromRole="EncabezadoCompra" ToRole="DetalleCompra" />
+          <NavigationProperty Name="Usuarios" Relationship="Self.FK_EncabezadoCompra_Usuarios" FromRole="EncabezadoCompra" ToRole="Usuarios" />
+        </EntityType>
+        <EntityType Name="Inventario">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="IdProducto" Type="Int64" Nullable="false" />
+          <Property Name="Descuento" Type="Decimal" Precision="2" Scale="1" />
+          <Property Name="Estado" Type="Int32" Nullable="false" />
+          <Property Name="CantidadDisponible" Type="Int32" Nullable="false" />
+          <NavigationProperty Name="Productos" Relationship="Self.FK_Inventario_Productos" FromRole="Inventario" ToRole="Productos" />
+        </EntityType>
+        <EntityType Name="LogEvents">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="Message" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Level" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="TimeStamp" Type="DateTime" Precision="3" />
+          <Property Name="Exception" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Properties" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Modulo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Metodo" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="Error" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+        </EntityType>
+        <EntityType Name="Productos">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="CodProducto" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NombreProducto" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="Descripcion" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Precio" Type="Decimal" Precision="19" Scale="4" Nullable="false" />
+          <Property Name="Imagen" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Boolean" />
+          <NavigationProperty Name="DetalleCompra" Relationship="Self.FK_DetalleCompra_Productos" FromRole="Productos" ToRole="DetalleCompra" />
+          <NavigationProperty Name="Inventario" Relationship="Self.FK_Inventario_Productos" FromRole="Productos" ToRole="Inventario" />
+        </EntityType>
+        <EntityType Name="Usuarios">
+          <Key>
+            <PropertyRef Name="IdRecord" />
+          </Key>
+          <Property Name="IdRecord" Type="Int64" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="NumeroDocumento" Type="String" MaxLength="600" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NombreCompleto" Type="String" MaxLength="600" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="NombreUsuario" Type="String" MaxLength="600" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="CorreoElectronico" Type="String" MaxLength="600" FixedLength="false" Unicode="false" Nullable="false" />
+          <Property Name="ClaveAccesoCifrada" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="FechaClave" Type="DateTime" Precision="3" />
+          <Property Name="NDiasClave" Type="Int32" />
+          <Property Name="Salt" Type="String" MaxLength="Max" FixedLength="false" Unicode="false" />
+          <Property Name="Estado" Type="Int32" Nullable="false" />
+          <Property Name="TipoUsuario" Type="Boolean" />
+          <NavigationProperty Name="EncabezadoCompra" Relationship="Self.FK_EncabezadoCompra_Usuarios" FromRole="Usuarios" ToRole="EncabezadoCompra" />
+        </EntityType>
+        <Association Name="FK_DetalleCompra_EncabezadoCompra">
+          <End Role="EncabezadoCompra" Type="Self.EncabezadoCompra" Multiplicity="1" />
+          <End Role="DetalleCompra" Type="Self.DetalleCompra" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="EncabezadoCompra">
+              <PropertyRef Name="IdRecord" />
+            </Principal>
+            <Dependent Role="DetalleCompra">
+              <PropertyRef Name="IdRecordEncabezado" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_DetalleCompra_Productos">
+          <End Role="Productos" Type="Self.Productos" Multiplicity="1" />
+          <End Role="DetalleCompra" Type="Self.DetalleCompra" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Productos">
+              <PropertyRef Name="IdRecord" />
+            </Principal>
+            <Dependent Role="DetalleCompra">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_EncabezadoCompra_Usuarios">
+          <End Role="Usuarios" Type="Self.Usuarios" Multiplicity="1" />
+          <End Role="EncabezadoCompra" Type="Self.EncabezadoCompra" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Usuarios">
+              <PropertyRef Name="IdRecord" />
+            </Principal>
+            <Dependent Role="EncabezadoCompra">
+              <PropertyRef Name="IdUsuario" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Inventario_Productos">
+          <End Role="Productos" Type="Self.Productos" Multiplicity="1" />
+          <End Role="Inventario" Type="Self.Inventario" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Productos">
+              <PropertyRef Name="IdRecord" />
+            </Principal>
+            <Dependent Role="Inventario">
+              <PropertyRef Name="IdProducto" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="PruebaCarvajalEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="Configuracion" EntityType="Self.Configuracion" />
+          <EntitySet Name="DetalleCompra" EntityType="Self.DetalleCompra" />
+          <EntitySet Name="EncabezadoCompra" EntityType="Self.EncabezadoCompra" />
+          <EntitySet Name="Inventario" EntityType="Self.Inventario" />
+          <EntitySet Name="LogEvents" EntityType="Self.LogEvents" />
+          <EntitySet Name="Productos" EntityType="Self.Productos" />
+          <EntitySet Name="Usuarios" EntityType="Self.Usuarios" />
+          <AssociationSet Name="FK_DetalleCompra_EncabezadoCompra" Association="Self.FK_DetalleCompra_EncabezadoCompra">
+            <End Role="EncabezadoCompra" EntitySet="EncabezadoCompra" />
+            <End Role="DetalleCompra" EntitySet="DetalleCompra" />
+          </AssociationSet>
+          <AssociationSet Name="FK_DetalleCompra_Productos" Association="Self.FK_DetalleCompra_Productos">
+            <End Role="Productos" EntitySet="Productos" />
+            <End Role="DetalleCompra" EntitySet="DetalleCompra" />
+          </AssociationSet>
+          <AssociationSet Name="FK_EncabezadoCompra_Usuarios" Association="Self.FK_EncabezadoCompra_Usuarios">
+            <End Role="Usuarios" EntitySet="Usuarios" />
+            <End Role="EncabezadoCompra" EntitySet="EncabezadoCompra" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Inventario_Productos" Association="Self.FK_Inventario_Productos">
+            <End Role="Productos" EntitySet="Productos" />
+            <End Role="Inventario" EntitySet="Inventario" />
+          </AssociationSet>
+          <FunctionImport Name="spActualizarInventario" ReturnType="Collection(Int32)">
+            <Parameter Name="CantidadDisponible" Mode="In" Type="Int32" />
+            <Parameter Name="IdProducto" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="spActualizarProducto" ReturnType="Collection(Int32)">
+            <Parameter Name="IdRecordProducto" Mode="In" Type="Int64" />
+          </FunctionImport>
+          <FunctionImport Name="spReporteVentas">
+            <Parameter Name="opcion" Mode="In" Type="String" />
+          </FunctionImport>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="PruebaCarvajalModelStoreContainer" CdmEntityContainer="PruebaCarvajalEntities">
+          <EntitySetMapping Name="Configuracion">
+            <EntityTypeMapping TypeName="PruebaCarvajalModel.Configuracion">
+              <MappingFragment StoreEntitySet="Configuracion">
+                <ScalarProperty Name="IdRecord" ColumnName="IdRecord" />
+                <ScalarProperty Name="Parametro" ColumnName="Parametro" />
+                <ScalarProperty Name="Valor" ColumnName="Valor" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="DetalleCompra">
+            <EntityTypeMapping TypeName="PruebaCarvajalModel.DetalleCompra">
+              <MappingFragment StoreEntitySet="DetalleCompra">
+                <ScalarProperty Name="IdRecord" ColumnName="IdRecord" />
+                <ScalarProperty Name="IdRecordEncabezado" ColumnName="IdRecordEncabezado" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="Cantidad" ColumnName="Cantidad" />
+                <ScalarProperty Name="PrecioCompraUnidad" ColumnName="PrecioCompraUnidad" />
+                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="EncabezadoCompra">
+            <EntityTypeMapping TypeName="PruebaCarvajalModel.EncabezadoCompra">
+              <MappingFragment StoreEntitySet="EncabezadoCompra">
+                <ScalarProperty Name="IdRecord" ColumnName="IdRecord" />
+                <ScalarProperty Name="Fecha" ColumnName="Fecha" />
+                <ScalarProperty Name="IdUsuario" ColumnName="IdUsuario" />
+                <ScalarProperty Name="SubTotal" ColumnName="SubTotal" />
+                <ScalarProperty Name="Impuestos" ColumnName="Impuestos" />
+                <ScalarProperty Name="Total" ColumnName="Total" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Inventario">
+            <EntityTypeMapping TypeName="PruebaCarvajalModel.Inventario">
+              <MappingFragment StoreEntitySet="Inventario">
+                <ScalarProperty Name="IdRecord" ColumnName="IdRecord" />
+                <ScalarProperty Name="IdProducto" ColumnName="IdProducto" />
+                <ScalarProperty Name="Descuento" ColumnName="Descuento" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="CantidadDisponible" ColumnName="CantidadDisponible" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="LogEvents">
+            <EntityTypeMapping TypeName="PruebaCarvajalModel.LogEvents">
+              <MappingFragment StoreEntitySet="LogEvents">
+                <ScalarProperty Name="IdRecord" ColumnName="IdRecord" />
+                <ScalarProperty Name="Message" ColumnName="Message" />
+                <ScalarProperty Name="Level" ColumnName="Level" />
+                <ScalarProperty Name="TimeStamp" ColumnName="TimeStamp" />
+                <ScalarProperty Name="Exception" ColumnName="Exception" />
+                <ScalarProperty Name="Properties" ColumnName="Properties" />
+                <ScalarProperty Name="Modulo" ColumnName="Modulo" />
+                <ScalarProperty Name="Metodo" ColumnName="Metodo" />
+                <ScalarProperty Name="Error" ColumnName="Error" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Productos">
+            <EntityTypeMapping TypeName="PruebaCarvajalModel.Productos">
+              <MappingFragment StoreEntitySet="Productos">
+                <ScalarProperty Name="IdRecord" ColumnName="IdRecord" />
+                <ScalarProperty Name="CodProducto" ColumnName="CodProducto" />
+                <ScalarProperty Name="NombreProducto" ColumnName="NombreProducto" />
+                <ScalarProperty Name="Descripcion" ColumnName="Descripcion" />
+                <ScalarProperty Name="Precio" ColumnName="Precio" />
+                <ScalarProperty Name="Imagen" ColumnName="Imagen" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Usuarios">
+            <EntityTypeMapping TypeName="PruebaCarvajalModel.Usuarios">
+              <MappingFragment StoreEntitySet="Usuarios">
+                <ScalarProperty Name="IdRecord" ColumnName="IdRecord" />
+                <ScalarProperty Name="NumeroDocumento" ColumnName="NumeroDocumento" />
+                <ScalarProperty Name="NombreCompleto" ColumnName="NombreCompleto" />
+                <ScalarProperty Name="NombreUsuario" ColumnName="NombreUsuario" />
+                <ScalarProperty Name="CorreoElectronico" ColumnName="CorreoElectronico" />
+                <ScalarProperty Name="ClaveAccesoCifrada" ColumnName="ClaveAccesoCifrada" />
+                <ScalarProperty Name="FechaClave" ColumnName="FechaClave" />
+                <ScalarProperty Name="NDiasClave" ColumnName="NDiasClave" />
+                <ScalarProperty Name="Salt" ColumnName="Salt" />
+                <ScalarProperty Name="Estado" ColumnName="Estado" />
+                <ScalarProperty Name="TipoUsuario" ColumnName="TipoUsuario" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="spActualizarInventario" FunctionName="PruebaCarvajalModel.Store.spActualizarInventario" />
+          <FunctionImportMapping FunctionImportName="spActualizarProducto" FunctionName="PruebaCarvajalModel.Store.spActualizarProducto" />
+          <FunctionImportMapping FunctionImportName="spReporteVentas" FunctionName="PruebaCarvajalModel.Store.spReporteVentas" />
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="false" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="Ninguno" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
